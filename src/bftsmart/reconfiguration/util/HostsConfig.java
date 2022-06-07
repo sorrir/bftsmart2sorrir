@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 public class HostsConfig {
     
     private HashMap<Integer,Config> servers = new HashMap<>();
+
+    boolean bootstrappingMode = true;
     
     
     /** Creates a new instance of ServersConfig */
@@ -86,6 +88,23 @@ public class HostsConfig {
         if(c != null){
             return new InetSocketAddress(c.host,c.port);
         }
+        if (c == null) {
+            System.out.println("Config information for id " + id + " seems to be null. Retrying to catch ...");
+            if (bootstrappingMode) {
+                try {
+                    Thread.sleep(3000);
+                    bootstrappingMode = false;
+                    c = (Config) this.servers.get(id);
+                    if (c != null) {
+                        return new InetSocketAddress(c.host, c.port);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+        System.out.println("Config information for id " + id + " is null");
         return null;
     }
     

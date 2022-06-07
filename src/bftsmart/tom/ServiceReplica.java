@@ -90,6 +90,32 @@ public class ServiceReplica {
         this(id, "", executor, recoverer, null, new DefaultReplier(), null);
     }
 
+
+    /**
+     * Constructor
+     *
+     * @param id Replica ID
+     * @param executor Executor
+     * @param replier Replier
+     * @param recoverer Recoverer
+     */
+    public ServiceReplica(int id, Executable executor, Recoverable recoverer, Replier replier) {
+        this(id, "", executor, recoverer, null, replier, null);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param id Replica ID
+     * @param executor Executor
+     * @param replier Replier
+     * @param recoverer Recoverer
+     * @param configHome configHome
+     */
+    public ServiceReplica(int id, Executable executor, Recoverable recoverer, Replier replier, String configHome) {
+        this(id, configHome, executor, recoverer, null, replier, null);
+    }
+
     /**
      * Constructor
      *

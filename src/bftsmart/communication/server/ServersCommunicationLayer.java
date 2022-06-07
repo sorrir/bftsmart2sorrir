@@ -121,22 +121,39 @@ public class ServersCommunicationLayer extends Thread {
         this.replica = replica;
         this.ssltlsProtocolVersion = controller.getStaticConf().getSSLTLSProtocolVersion();
 
+        System.out.println("Init ServersCommunicationLayer..");
+
         String myAddress;
-        String confAddress =
+        String confAddress = "";
+        try {
+            confAddress =
                     controller.getStaticConf().getRemoteAddress(controller.getStaticConf().getProcessId()).getAddress().getHostAddress();
+        } catch (Exception e) {
+            // Now look what went wrong ...
+            logger.info(" ####### Debugging at setting up the Communication layer ");
+            logger.info("my Id is " + controller.getStaticConf().getProcessId());
+            logger.info("my remote Address is  " + controller.getStaticConf().getRemoteAddress(controller.getStaticConf().getProcessId()));
+            confAddress = "";
+        }
         
         if (InetAddress.getLoopbackAddress().getHostAddress().equals(confAddress)) {
             myAddress = InetAddress.getLoopbackAddress().getHostAddress();
-            }
+            System.out.println("myAddress = InetAddress.getLoopbackAddress().getHostAddress();" + myAddress);
+        }
         else if (controller.getStaticConf().getBindAddress().equals("")) {
             myAddress = InetAddress.getLocalHost().getHostAddress();
+            System.out.println("InetAddress.getLocalHost().getHostAddress();" + myAddress);
             //If the replica binds to the loopback address, clients will not be able to connect to replicas.
             //To solve that issue, we bind to the address supplied in config/hosts.config instead.
-            if (InetAddress.getLoopbackAddress().getHostAddress().equals(myAddress) && !myAddress.equals(confAddress)) {
+            System.out.println("InetAddress.getLoopbackAddress().getHostAddress()" + InetAddress.getLoopbackAddress().getHostAddress());
+            System.out.println("confAddress " + confAddress);
+            if (!confAddress.equals("") && !myAddress.equals(confAddress)) {
                 myAddress = confAddress;
+                System.out.println("if (InetAddress.getLoopbackAddress().getHostAddress().equals(myAddress) && !myAddress.equals(confAddress)) {" + myAddress);
             }
         } else {
             myAddress = controller.getStaticConf().getBindAddress();
+            System.out.println(" myAddress = controller.getStaticConf().getBindAddress();" + myAddress);
         }
         
         int myPort = controller.getStaticConf().getServerToServerPort(controller.getStaticConf().getProcessId());
@@ -162,9 +179,15 @@ public class ServersCommunicationLayer extends Thread {
 		context = SSLContext.getInstance(this.ssltlsProtocolVersion);
 		context.init(kmf.getKeyManagers(), trustMgrFactory.getTrustManagers(), new SecureRandom());
 
+        if (!myAddress.equals("127.0.0.1") && !myAddress.equals("127.0.1.0"))
+            myAddress =  InetAddress.getLocalHost().getHostAddress();
+
+        System.out.println("Debug info serverSocket TLS : myAddress=" + myAddress + " , myPort=" + myPort);
 		serverSocketFactory = context.getServerSocketFactory();
 		this.serverSocketSSLTLS = (SSLServerSocket) serverSocketFactory.createServerSocket(myPort, 100,
 				InetAddress.getByName(myAddress));
+
+		logger.info("Binding Server-Server TLSSocket on " + myAddress + " on port " + myPort);
 
 		serverSocketSSLTLS.setEnabledCipherSuites(this.controller.getStaticConf().getEnabledCiphers());
 

@@ -119,7 +119,7 @@ public class NettyClientServerCommunicationSystemClientSide extends SimpleChanne
 
 					ChannelFuture future = connectToReplica(replicaId, secretKeyFactory);
 
-					logger.debug("ClientID {}, connecting to replica {}, at address: {}", clientId, replicaId,
+					logger.info("ClientID {}, connecting to replica {}, at address: {}", clientId, replicaId,
 							controller.getRemoteAddress(replicaId));
 
 					future.awaitUninterruptibly();
@@ -156,7 +156,7 @@ public class NettyClientServerCommunicationSystemClientSide extends SimpleChanne
 					rl.writeLock().lock();
 					try {
 						ChannelFuture future = connectToReplica(replicaId, secretKeyFactory);
-						logger.debug("ClientID {}, updating connection to replica {}, at address: {}", clientId,
+						logger.info("ClientID {}, updating connection to replica {}, at address: {}", clientId,
 								replicaId, controller.getRemoteAddress(replicaId));
 
 						future.awaitUninterruptibly();
@@ -322,7 +322,7 @@ public class NettyClientServerCommunicationSystemClientSide extends SimpleChanne
 
 				sent++;
 			} else {
-				logger.debug("Channel to " + targets[target] + " is not connected");
+				logger.info("Channel to " + targets[target] + " is not connected");
 			}
 		}
 

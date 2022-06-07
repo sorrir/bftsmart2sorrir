@@ -123,6 +123,7 @@ public class NettyClientServerCommunicationSystemServerSide extends SimpleChanne
 			String confAddress = controller.getStaticConf().getRemoteAddress(controller.getStaticConf().getProcessId())
 					.getAddress().getHostAddress();
 
+			System.out.println("My confAddress is " + confAddress);
 			if (InetAddress.getLoopbackAddress().getHostAddress().equals(confAddress)) {
 
 				myAddress = InetAddress.getLoopbackAddress().getHostAddress();
@@ -137,8 +138,7 @@ public class NettyClientServerCommunicationSystemServerSide extends SimpleChanne
 				// to replicas.
 				// To solve that issue, we bind to the address supplied in config/hosts.config
 				// instead.
-				if (InetAddress.getLoopbackAddress().getHostAddress().equals(myAddress)
-						&& !myAddress.equals(confAddress)) {
+				if (!confAddress.equals("") && !myAddress.equals(confAddress)) {
 
 					myAddress = confAddress;
 				}
@@ -149,6 +149,9 @@ public class NettyClientServerCommunicationSystemServerSide extends SimpleChanne
 			}
 
 			int myPort = controller.getStaticConf().getPort(controller.getStaticConf().getProcessId());
+
+			if (!myAddress.equals("127.0.0.1") && !myAddress.equals("127.0.1.0"))
+				myAddress =  InetAddress.getLocalHost().getHostAddress();
 
 			ChannelFuture f = b.bind(new InetSocketAddress(myAddress, myPort)).sync();
 
@@ -163,7 +166,7 @@ public class NettyClientServerCommunicationSystemServerSide extends SimpleChanne
 			logger.info("maxBatch = " + controller.getStaticConf().getMaxBatchSize());
 			if(controller.getStaticConf().getUseSignatures() == 1) logger.info("Using Signatures");
                         else if (controller.getStaticConf().getUseSignatures() == 2) logger.info("Using benchmark signature verification");
-			logger.info("Binded replica to IP address " + myAddress);
+			logger.info("Binded replica (client-replica socket) to IP address " + myAddress);
 			// ******* EDUARDO END **************//
 
 			/* Tulio Ribeiro */
