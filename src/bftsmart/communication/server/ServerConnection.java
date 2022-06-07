@@ -575,8 +575,11 @@ public class ServerConnection {
 					.writeInt(this.controller.getStaticConf().getProcessId());
 
 		} catch (SocketException e) {
-			logger.error("Connection refused (SocketException)");
-			// e.printStackTrace();
+			logger.error("Connection refused (SocketException) Failed connecting to "
+					+ this.controller.getStaticConf().getHost(remoteId) + " on port " +
+					this.controller.getStaticConf().getServerToServerPort(remoteId) );
+			//e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

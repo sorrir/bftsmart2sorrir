@@ -1,3 +1,9 @@
 bin/bftsmart
 config/currentView
 test
+classes/*
+dist/*
+*.jar
+lib.txt
+sources.txt
+.idea/

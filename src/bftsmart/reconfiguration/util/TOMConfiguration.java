@@ -334,7 +334,7 @@ public class TOMConfiguration extends Configuration {
             
             Pattern pattern = Pattern.compile("^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
 
-            if (s == null || !pattern.matcher(s).matches()) {
+            if (s == null || (!pattern.matcher(s).matches() && !s.equals("resolve"))) {
                 bindAddress = "";
             } else {
                 bindAddress = s;
